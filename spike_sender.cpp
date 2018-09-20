@@ -1,6 +1,7 @@
 #include <chrono>
 #include <fstream>
 #include <iostream>
+#include <thread>
 
 #include <contra/relay.hpp>
 #include <contra/zmq/zeromq_transport.hpp>
@@ -38,12 +39,22 @@ int main(int argc, char** argv) {
   }
   std::cout << " done!" << std::endl;
   std::cout << "Got " << spikes.size() << " spikes." << std::endl;
+  std::cout << "Time range from " << spikes.front().time << " to "
+            << spikes.back().time << "ms" << std::endl;
+  std::cout << "The simulation speed is " << speed
+            << "ms of simulation time per second in real world time"
+            << std::endl;
+  std::cout << "The simulation will take "
+            << (spikes.back().time - spikes.front().time) / speed
+            << " seconds to complete." << std::endl;
 
+  const double t_0 = spikes.front().time;
   const double t_max = spikes.back().time;
-  double simulation_time = 0.0;
+  double simulation_time = spikes.front().time;
   auto current_iterator = spikes.begin();
 
-  std::cout << "Start transmission!" << std::endl;
+  std::cout << "Press enter to start transmission!" << std::endl;
+  std::cin.get();
   using clock_t = std::chrono::steady_clock;
   const auto start_time = clock_t::now();
   int recorded_spikes = 0;
@@ -51,7 +62,7 @@ int main(int argc, char** argv) {
     const auto current_time = clock_t::now();
     const std::chrono::duration<double> elapsed_time =
         current_time - start_time;
-    simulation_time = elapsed_time.count() * 1000.0 * speed;
+    simulation_time = t_0 + elapsed_time.count() * speed;
 
     while (current_iterator != spikes.end() &&
            current_iterator->time <= simulation_time) {
