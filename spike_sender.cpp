@@ -18,10 +18,10 @@ int main(int argc, char** argv) {
   nesci::producer::SpikeDetector sd{"spike_detector"};
 
   // ms of simulation time per second
-  const double speed = 10.0;
+  const double speed = argc > 2 ? std::stod(argv[2]) : 10.0;
 
   // Send x spikes at ones
-  const int spikes_per_package = 5;
+  const int spikes_per_package = argc > 3 ? std::stoi(argv[3]) : 5;
 
   std::fstream file(argv[1]);
   if (!file) {
@@ -47,6 +47,8 @@ int main(int argc, char** argv) {
   std::cout << "The simulation will take "
             << (spikes.back().time - spikes.front().time) / speed
             << " seconds to complete." << std::endl;
+  std::cout << "Sending every " << spikes_per_package << " spikes!"
+            << std::endl;
 
   const double t_0 = spikes.front().time;
   const double t_max = spikes.back().time;
