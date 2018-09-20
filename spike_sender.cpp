@@ -66,7 +66,9 @@ int main(int argc, char** argv) {
 
     while (current_iterator != spikes.end() &&
            current_iterator->time <= simulation_time) {
-      std::cout << "Spike: " << current_iterator->neuron_id << std::endl;
+      std::cout << "{" << current_iterator->time << ","
+                << current_iterator->neuron_id << "}" << std::endl;
+      //   std::cout << "Spike: " << current_iterator->neuron_id << std::endl;
       sd.Record(*current_iterator);
       ++recorded_spikes;
       if (recorded_spikes >= spikes_per_package) {
@@ -78,7 +80,7 @@ int main(int argc, char** argv) {
       ++current_iterator;
     }
 
-    std::cout << simulation_time << "/" << t_max << "ms" << std::endl;
+    // std::cout << simulation_time << "/" << t_max << "ms" << std::endl;
   } while (simulation_time < t_max);
 
   if (recorded_spikes > 0) {
